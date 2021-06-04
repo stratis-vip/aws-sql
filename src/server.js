@@ -4,12 +4,10 @@ const db = require('./dbase.js')
 const md5= require('md5')
 
 const app = express()
-const HTTP_PORT = 8000
+
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
-
-app.listen(HTTP_PORT, () => console.log("Server running on port %PORT%".replace("%PORT%", HTTP_PORT)))
 
 app.get("/", (req, res, next) => res.json({"message": "OK"}))
 
@@ -79,3 +77,5 @@ app.post("/api/user/", (req, res, next) => {
 })
 
 app.use((req, res) => res.status(404))
+
+module.exports = app
