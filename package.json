@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
+  "description": "last server",
+  "repository": "https://github.com/stratis-vip/aws-sql",
   "scripts": {
     "start": "node index.js"
   },
