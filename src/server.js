@@ -1,6 +1,5 @@
 const express = require('express')
 const bodyParser = require("body-parser");
-const db = require('./dbase.js')
 const md5= require('md5')
 
 const app = express()
@@ -12,32 +11,13 @@ app.use(bodyParser.json());
 app.get("/", (req, res, next) => res.json({"message": "OK"}))
 
 app.get("/api/users", (req, res, next) => {
-    const SQL = "SELECT * FROM user"
-    const params = []
-    db.all(SQL, params, (err, rows) => {
-        if (err) {
-            return res.status(400).json({"error": err.message})
-        } else {
-            return res.json({
-                "message": "success",
-                "data": rows
-            })
-        }
-    })
+  res.status(200).send({"message": "success", users: []})
 })
 
 app.get("/api/user/:id", (req, res, next) => {
-    const sql = "SELECT * FROM user WHERE id = ?"
-    const params = [req.params.id]
-    db.get(sql, params, (err, row) => {
-        if (err) {
-            return res.status(400).json({"error": err.message});
-        }
-        return res.json({
-            "message": "success",
-            "data": row
-        })
-    });
+    res.status(200).send({"message": "success", user: {
+        id: req.params.id
+        }})
 });
 
 
@@ -62,17 +42,9 @@ app.post("/api/user/", (req, res, next) => {
         password: md5(req.body.password)
     }
 
-    const SQL = 'INSERT INTO user (name, email, password) VALUES (?,?,?)'
-    const params = [data.name, data.email, data.password]
-    db.run(SQL, params, (err, result) => {
-        if (err) {
-            return res.status(400).json({"error": err.message})
-        }
-        return res.json({
-            "message": "success",
-            "data": data,
-            "id": this.lastID
-        })
+    return res.status(200).json({
+        "message": "success",
+        "data": data
     })
 })
 
