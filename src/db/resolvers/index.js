@@ -1,34 +1,22 @@
-const {checkStatus} = require('../index')
-const poems = require('./poems/poems')
-const categories = require('./poems/categories')
-const users = require('./msgs/users')
-const companies = require('./msgs/companies')
-const sessions = require('./msgs/sessions')
-const days = require('./msgs/days')
+// const {checkStatus} = require('../index')
+const keimena = require('./poems')
 const scalars = require('./scalars')
+const msgs = require('./msgs')
 
 
 const resolvers = {
     Query: {
-        ...poems.Query,
-        ...categories.Query,
-        ...users.Query,
-        ...companies.Query,
-        ...sessions.Query,
-        ...days.Query,
-
-        status: async () => await checkStatus(),
+        ...keimena.Query,
+        ...msgs.Query,
+        // status: async () => await checkStatus(),
     },
-    ...poems.Others,
-    ...sessions.Others,
-    ...days.Others,
     Mutation: {
-        ...poems.Mutation,
-        ...users.Mutation,
-        ...companies.Mutation,
-        ...sessions.Mutation,
-        ...days.Mutation
+        ...keimena.Mutation,
+        ...msgs.Mutation
     },
+    ...keimena.Others,
+    ...msgs.Others,
+
     ...scalars
 };
 

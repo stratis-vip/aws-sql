@@ -3,7 +3,7 @@ const {gql} = require('apollo-server');
 const typeDefs = gql`
     scalar Date
     scalar DateOnly
-    
+
     type Poem {
         id: Int!,
         idInCategory: Int!,
@@ -14,12 +14,12 @@ const typeDefs = gql`
         createdAt: Date,
         updatedAt: Date
     }
-    
+
     type Category{
         id: ID!,
         description: String!
     }
-    
+
     input PoemsInput {
         id: Int!
         idInCategory: Int!,
@@ -28,8 +28,8 @@ const typeDefs = gql`
         authDate: DateOnly!,
         explanation: String,
     }
-    
-    
+
+
     #msgs
     scalar Stats
 
@@ -42,7 +42,7 @@ const typeDefs = gql`
         stop_msgs: Int
         company: Company!
     }
-    
+
     type User{
         id:ID!
         name:String!
@@ -59,11 +59,34 @@ const typeDefs = gql`
         hourlyStats:Stats
         updatedAt: Date!
     }
-    
+
     type Company{
         id:ID!
         name:String!
         expenses: Float!
+    }
+
+    type Payment {
+        id:ID!
+        date:DateOnly!
+        amount: Float!
+        expenses: Float
+        company: Company!
+        notes: String
+    }
+
+    type TotalPayment {
+        amount: Float!
+        expenses: Float
+        company: Company!
+    }
+
+    input inPayment {
+        date:DateOnly!
+        amount: Float!
+        expenses: Float
+        companyId: ID!
+        notes: String
     }
 
     input InDayStat {
@@ -72,11 +95,11 @@ const typeDefs = gql`
         ans:Int
         hourlyStats: Stats
     }
-    
+
     type Mutation {
         addPoem(input:PoemsInput!): Poem!
         addMassPoem(input: [PoemsInput!]!): Int!
-        
+
         #msgs
         updateUser(id:ID!, name:String, email:String, imgUrl: String):User
         createUser( name:String!, email:String!, password: String!, imgUrl: String):User
@@ -84,6 +107,7 @@ const typeDefs = gql`
             start:Date, start_msgs:Int,
             stop:Date, stop_msgs:Int,
         ):Session
+        closeSession(id:ID!, stop:Date!, stop_msgs:Int!):Session!
         setDay(
             date:DateOnly!,
             msgs:Int!,
@@ -92,15 +116,22 @@ const typeDefs = gql`
             hourlyStats:Stats!
         ): DayStat!
         updateDayArray(companyId:ID!, dates:[InDayStat]!):[DayStat!]!
-        
+        addPayment(input:inPayment):Payment!
+
     }
-    
+
     type MinMax {
         category: ID!
         min: Int!
         max:Int!
     }
 
+    type Statistic {
+        msgs: Int!
+        company: Company!
+        user: User!
+        secs: Int
+    }
 
     # The "Query" type is special: it lists all of the available queries that
     # clients can execute, along with the return type for each. In this
@@ -108,7 +139,7 @@ const typeDefs = gql`
     type Query {
         status: Boolean,
         poems (
-            order:String, 
+            order:String,
             category: ID,
             search: String
         ): [Poem]!,
@@ -120,21 +151,27 @@ const typeDefs = gql`
         countCategories: Int!
         maxIdPoems : Int!
         minIdInCategory(category: ID!): Int!
-        maxIdInCategory(category: ID!): Int! 
+        maxIdInCategory(category: ID!): Int!
         minMaxByCategory: [MinMax]!
-        
-        
+
+
         #msgs
         getUsers:[User]!
-        getUser(id:ID):User
+        getUserById(id:ID!):User
+        getUserByEmail(email:String!):User
         getCompanies: [Company]!
-        getSessions(userId:ID, from:Date, to:Date): [Session]!
+        getSessions(userId:ID, from:DateOnly, to:DateOnly, day:DateOnly): [Session]!
+        getCurrentOpenSession(day:DateOnly!):Session
         timeUpdated: DayStat!
         getDays(from:DateOnly): [DayStat]!
         getDay(date:DateOnly!): DayStat
         "Υπολογίζεί όλες τις εγγραφές που υπάρχου σε DayStats"
         daysCount: Int!
+        msgsFromTo(from:DateOnly!, to:DateOnly!, companyId:ID!): Int!
         getDaysByCompany(companyId:ID!, offset:Int, limit:Int, from:DateOnly):[DayStat]!
+        statistics(userId:ID): [Statistic]!
+        getPayments:[Payment]!
+        getTotalPayments: [TotalPayment]!
     }
 `;
 

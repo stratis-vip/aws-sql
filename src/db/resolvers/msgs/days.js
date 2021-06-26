@@ -5,19 +5,19 @@ const {dayStatMdl} = require("../../models");
 
 const days = {
     Query: {
-        timeUpdated: async ()=> {
-            try{
-                return await dayStatMdl.findOne({ order:[['date','DESC']]})
+        timeUpdated: async () => {
+            try {
+                return await dayStatMdl.findOne({order: [['date', 'DESC']]})
 
-            }catch (err){
+            } catch (err) {
                 throw new ApolloError(err.message)
             }
         },
         getDays: async (_, {from}) => {
             try {
                 // const date = Object.keys(args).length === 0 ? null :
-                const where = from ? {where: {date: {[Op.gte]:from}}}: undefined
-                console.log('FROM = ', from )
+                const where = from ? {where: {date: {[Op.gte]: from}}} : undefined
+                console.log('FROM = ', from)
                 const dayStats = await dayStatMdl.findAll({
                     order: ['date'], ...where
                 })
@@ -67,6 +67,19 @@ const days = {
                 throw new ApolloError(err.message)
             }
         },
+        msgsFromTo: async (_, {from, to, companyId}) => {
+            return await dayStatMdl.sum(['msgs'], {
+                where: {
+                    [Op.and]: {
+                        companyId,
+                        date: {
+                            [Op.gte]: from,
+                            [Op.lte]: to
+                        }
+                    }
+                }
+            })
+        }
     },
 
     Mutation: {
@@ -100,7 +113,7 @@ const days = {
                         }
                     })
                     if (rec) {
-                        console.log('UPDATE RETURN ',await rec.update({msgs, ans, hourlyStats}))
+                        console.log('UPDATE RETURN ', await rec.update({msgs, ans, hourlyStats}))
                         retVal.push(await dayStatMdl.findOne({
                             where: {
                                 date, companyId

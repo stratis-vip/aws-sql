@@ -5,9 +5,16 @@ const {userMdl} = require("../../models");
 
 const users = {
     Query: {
-        getUser: async (_parent, {id}) => {
+        getUserById: async (_parent, {id}) => {
             try {
                 return await userMdl.findByPk(id)
+            } catch (err) {
+                throw new ApolloError(err.message)
+            }
+        },
+        getUserByEmail:async (_parent, {email}) => {
+            try {
+                return await userMdl.findOne({where: {email}})
             } catch (err) {
                 throw new ApolloError(err.message)
             }
@@ -51,6 +58,7 @@ const users = {
             }
         }
     },
+    Others: {}
 }
 
 module.exports = users

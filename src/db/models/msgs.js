@@ -1,3 +1,4 @@
+const {DateTime} = require("luxon");
 const {DataTypes} = require("sequelize");
 const {sequelize} = require('../')
 
@@ -20,6 +21,7 @@ const companyMdl = sequelize.define('company', {
     charset: 'utf8',
     modelName: 'companies'
 })
+
 const dayStatMdl = sequelize.define('dayStat', {
     date: {
         type: DataTypes.DATEONLY,
@@ -96,6 +98,40 @@ const userMdl = sequelize.define('user', {
     }
 })
 
+const paymentMdl = sequelize.define('payment', {
+    id: {
+        type: DataTypes.UUID,
+        primaryKey: true,
+        defaultValue: DataTypes.UUIDV4
+    },
+    date: {
+        type: DataTypes.DATEONLY,
+        allowNull: false,
+    },
+    amount: {
+        type: DataTypes.FLOAT,
+        allowNull: false,
+        unique: true
+    },
+    expenses: {
+        type: DataTypes.FLOAT,
+        allowNull: false,
+        defaultValue: -4
+    },
+    notes: {
+        type: DataTypes.STRING(200),
+        allowNull: true,
+        defaultValue: null
+    }
+})
+
+
+companyMdl.hasMany(paymentMdl, {
+    foreignKey: {
+        allowNull: false
+    }
+})
+
 companyMdl.hasMany(dayStatMdl, {
     foreignKey: {
         allowNull: false
@@ -128,4 +164,4 @@ sessionMdl.belongsTo(userMdl,
         }
     })
 
-module.exports= {companyMdl,dayStatMdl,sessionMdl,userMdl}
+module.exports = {companyMdl, dayStatMdl, sessionMdl, userMdl, paymentMdl}

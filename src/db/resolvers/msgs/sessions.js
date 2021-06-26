@@ -1,3 +1,6 @@
+const {sequelize} = require("../../index");
+const {Sequelize} = require("sequelize");
+const {Op} = require("sequelize");
 const {companyMdl} = require("../../models");
 const {userMdl} = require("../../models");
 const {ApolloError} = require("apollo-server");
@@ -7,26 +10,52 @@ const {DateTime} = require("luxon");
 const sessions = {
     Query: {
         getSessions: async (_, args) => {
-            try{
-                const where = {}
-                const {userId, from, to } = args
-                const newTo = to ? DateTime.fromJSDate(to).endOf('day').toISO() : null
-                if (userId){
-                    where.userId = userId
+            try {
+                let where = ''
+                const {userId, from, to, day} = args
+                if (userId) {
+                    where = `userId = "${userId}" and `
+                }
+                console.log(where)
+                if (day) {
+                   const [a,metadata] = await sequelize.query(`select * from sessions where  ${where} date(start) = "${day}" ORDER BY start`)
+                    return a
+                } else {
+                    let newWhere = where
+                    if (from) {
+                        newWhere = `date(start) >= "${from}" `
+                        // where.start = {[Op.gte]: from}
+                    }
+                    if (to) {
+                        newWhere += ` AND (date(start) <= "${to}")`
+                        // where.stop = {[Op.or]: [{[Op.lte]: to}, {[Op.eq]: null}]}
+                    }
+                    const [a,metadata] = await sequelize.query(`select * from sessions where ${where} ${newWhere} ORDER BY start`)
+
+                    return a
                 }
 
-                if (from){
-                    where.start = {[Op.gte]: from}
-                }
-                if (newTo){
-                    where.stop = {[Op.or]:[{[Op.lte]: newTo},{[Op.eq]:null}]}
-                }
-                return await sessionMdl.findAll({where,order: ['start']})
-            }catch (err){
+                // return await sessionMdl.findAll({where, order: ['start']})
+            } catch (err) {
                 throw new ApolloError(err.message)
             }
 
-        }
+        },
+        getCurrentOpenSession: async (_, args) => {
+            console.log(args)
+            const retVal = await sessionMdl.findAll({
+                where: {
+                    [Op.and]: {
+                        stop: null,
+                        start: {[Op.gte]: args.day}
+                    }
+                }
+            })
+            if (retVal.length === 0) {
+                return null
+            }
+            return retVal[0]
+        },
     },
     Mutation: {
         setSession: async (_, args) => {
@@ -35,32 +64,36 @@ const sessions = {
             //   start: 2020-12-05T10:12:13.000Z,
             //   start_msgs: 345
             const {id, userId} = args
-            try{
-                if (id){
+            try {
+                if (id) {
                     //Update
                     console.log(args)
                     try {
                         await sessionMdl.update(args, {where: {id}})
                         return await sessionMdl.findByPk(id)
-                    }catch (err){
+                    } catch (err) {
                         throw new ApolloError(err.message)
                     }
-                }else {
+                } else {
                     //Create
                     try {
                         return await sessionMdl.create(args)
-                    }catch (err){
+                    } catch (err) {
                         throw new ApolloError(err.message)
                     }
                 }
 
-            }catch(err){
+            } catch (err) {
                 throw new ApolloError(err.message)
             }
 
             console.log(args)
+        },
+        closeSession : async (_, args) => {
+            const {id} = args
+            await sessionMdl.update(args, {where: {id}})
+            return await sessionMdl.findByPk(id)
         }
-        ,
     },
     Others: {
         Session: {

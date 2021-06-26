@@ -12,7 +12,8 @@ const companies ={
         }
     },
     Mutation:{
-    }
+    },
+    Others:{}
 }
 
 module.exports = companies
