@@ -67,7 +67,7 @@ const sessions = {
             try {
                 if (id) {
                     //Update
-                    console.log(args)
+                    console.log('I will update! ', args)
                     try {
                         await sessionMdl.update(args, {where: {id}})
                         return await sessionMdl.findByPk(id)

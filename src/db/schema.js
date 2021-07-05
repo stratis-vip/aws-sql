@@ -132,6 +132,13 @@ const typeDefs = gql`
         user: User!
         secs: Int
     }
+    
+    type MsgStatistic {
+        date: Int!
+        msgs: Int!
+        ans: Int!
+        ps: Float!
+    }
 
     # The "Query" type is special: it lists all of the available queries that
     # clients can execute, along with the return type for each. In this
@@ -169,9 +176,11 @@ const typeDefs = gql`
         daysCount: Int!
         msgsFromTo(from:DateOnly!, to:DateOnly!, companyId:ID!): Int!
         getDaysByCompany(companyId:ID!, offset:Int, limit:Int, from:DateOnly):[DayStat]!
-        statistics(userId:ID): [Statistic]!
+        generalStatistics(userId:ID): [Statistic]!
+        msgStatistics(companyId:ID!):[MsgStatistic]!
         getPayments:[Payment]!
         getTotalPayments: [TotalPayment]!
+        
     }
 `;
 

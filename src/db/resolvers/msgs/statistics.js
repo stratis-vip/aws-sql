@@ -5,7 +5,7 @@ const {sequelize} = require('../../../db')
 
 const statistics = {
     Query: {
-        statistics: async (parent, {userId}) => {
+        generalStatistics: async (parent, {userId}) => {
             //πόσα μηνύματα είναι πριν τα sessions
             try {
                 //1o na brv την ημερομηνία που άρχισαν τα sessions
@@ -35,6 +35,14 @@ const statistics = {
             } catch (e) {
                 console.log(e)
             }
+        },
+        msgStatistics: async (_, {companyId}) => {
+            try{
+                return await sequelize.query(`call GetMsgsStatistics('${companyId}')`)
+            }catch (e){
+                console.log(e)
+            }
+
         }
     },
     Others: {
