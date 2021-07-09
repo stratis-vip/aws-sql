@@ -16,7 +16,12 @@ const companyMdl = sequelize.define('company', {
         type: DataTypes.FLOAT,
         allowNull: false,
         defaultValue: -4.0
-    }
+    },
+    tariff: {
+    type: DataTypes.FLOAT,
+        allowNull: false,
+        defaultValue: 0.07
+}
 }, {
     charset: 'utf8',
     modelName: 'companies'

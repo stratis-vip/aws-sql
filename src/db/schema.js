@@ -64,6 +64,7 @@ const typeDefs = gql`
         id:ID!
         name:String!
         expenses: Float!
+        tariff: Float!
     }
 
     type Payment {
