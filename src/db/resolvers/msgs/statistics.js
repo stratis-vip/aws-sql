@@ -42,8 +42,22 @@ const statistics = {
             }catch (e){
                 console.log(e)
             }
+        },
+        currentMonthStats: async (_, {companyId}) => {
+            try{
+                return await sequelize.query(`call GetCurrentMonthSum('${companyId}')`)
+            }catch (e){
+                console.log(e)
+            }
+        },
+        lastMonthStats: async (_, {companyId}) => {
+            try{
+                return await sequelize.query(`call GetLastMonthSum('${companyId}')`)
+            }catch (e){
+                console.log(e)
+            }
+        },
 
-        }
     },
     Others: {
         Statistic: {

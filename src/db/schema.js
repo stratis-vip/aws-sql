@@ -140,6 +140,12 @@ const typeDefs = gql`
         ps: Float!
     }
 
+    type MonthStatistic {
+        msgs: Int!
+        ans: Int!
+        ps: Float!
+    }
+
     # The "Query" type is special: it lists all of the available queries that
     # clients can execute, along with the return type for each. In this
     # case, the "books" query returns an array of zero or more Books (defined above).
@@ -178,6 +184,8 @@ const typeDefs = gql`
         getDaysByCompany(companyId:ID!, offset:Int, limit:Int, from:DateOnly):[DayStat]!
         generalStatistics(userId:ID): [Statistic]!
         msgStatistics(companyId:ID!):[MsgStatistic]!
+        currentMonthStats(companyId:ID!):[MonthStatistic]!
+        lastMonthStats(companyId:ID!):[MonthStatistic]!
         getPayments:[Payment]!
         getTotalPayments: [TotalPayment]!
         
