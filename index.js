@@ -3,6 +3,7 @@ const app = require('./src/server')
 const typeDefs = require('./src/db/schema')
 const resolvers = require('./src/db/resolvers')
 const {ApolloServer} = require('apollo-server');
+const cors = require('cors')
 
 
 
