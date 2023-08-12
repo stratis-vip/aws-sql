@@ -1,16 +1,16 @@
-const {Poem,CategoryModel} = require('../../models')
-const {sequelize} = require("../");
+const { Poem, CategoryModel } = require('../../models')
+// const {sequelize} = require("../");
 
 const categories = {
     Query: {
         categories: async () => await CategoryModel.findAll({
             order: [['description']]
         }),
-        maxIdInCategory: async (parent, {category}) => await Poem.max('idInCategory', {
-            where: {category}
+        maxIdInCategory: async (parent, { category }) => await Poem.max('idInCategory', {
+            where: { category }
         }),
-        minIdInCategory: async (parent, {category}) => await Poem.min('idInCategory', {
-            where: {category}
+        minIdInCategory: async (parent, { category }) => await Poem.min('idInCategory', {
+            where: { category }
         }),
         countCategories: async () => await CategoryModel.count(),
         minMaxByCategory: async () => {

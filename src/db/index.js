@@ -20,7 +20,6 @@ const sequelize = new Sequelize(DBDBASE, DBUSER, DBPASS, {
         idle: 10000
     },
 
-    logging: true,
     define: {
         timestamps: true,
         charset: 'utf8',
